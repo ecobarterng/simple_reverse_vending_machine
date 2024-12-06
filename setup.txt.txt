@@ -1,0 +1,19 @@
+sudo apt update
+sudo apt full-upgrade
+pip3 install escpos --break-system-packages
+pip install gunicorn --break-system-packages
+pip3 install pygame --break-system-packages
+
+
+sudo cp printer.rules /etc/udev/rules.d
+udevadm control --reload-rules && udevadm trigger
+/etc/XDG/XSESSION//LDXEpi/
+sudo nano AutoStart
+
+@xset s noblank
+@xset s off
+@unclutter -idle 1 -root &
+@gunicorn -b localhost:8000 -w 1 App:app &
+@sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' '~/.config/chromium/Default/Preferences'
+@sed -i 's/"exit_type":"Crashed"/"exit_type":"Normal"/' '~/.config/chromium/Default/Preferences'
+@chromium-browser --kiosk --noerrdialogs --disable-infobars --autoplay-policy=no-user-gesture-required http://127.0.0.1:8000 & 
